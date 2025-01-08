@@ -3,7 +3,7 @@ import { StyleSheet, View, FlatList } from 'react-native';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Импорт AsyncStorage
+import AsyncStorage from '@react-native-async-storage/async-storage'; 
 import React, { useState } from 'react';
 import { Collapsible } from '@/components/Collapsible';
 import { ExternalLink } from '@/components/ExternalLink';

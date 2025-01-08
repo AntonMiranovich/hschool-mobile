@@ -19,6 +19,7 @@ import reactImage from '@/assets/images/react.png'
 import sqlImage from '@/assets/images/sql.png'
 import typescriptImage from '@/assets/images/typescript.png'
 import { Ionicons } from '@expo/vector-icons'
+import { useRoute } from '@react-navigation/native'
 
 interface iDescription {
 	readonly id: number
@@ -47,7 +48,9 @@ const topicImageMap: Record<string, any> = {
 export default function DescriptionScreen() {
 	const { topic } = useLocalSearchParams()
 	const [activeTopic, setActiveTopic] = useState<iTopic>()
-	const [likedQuestions, setLikedQuestions] = useState<iDescription[]>([]) // Состояние для хранения ID понравившихся вопросов
+	const [likedQuestions, setLikedQuestions] = useState<iDescription[]>([])
+
+	
 
 	const loadLikedQuestions = async () => {
 		const storedLikes = await AsyncStorage.getItem('likedQuestions')
@@ -63,15 +66,17 @@ export default function DescriptionScreen() {
 			: [...likedQuestions, el];
 
 		setLikedQuestions(updatedLikes)
-		await AsyncStorage.setItem('likedQuestions', JSON.stringify(updatedLikes)) // Сохранение в AsyncStorage
+		await AsyncStorage.setItem('likedQuestions', JSON.stringify(updatedLikes))
 		console.log(updatedLikes);
 
 	}
 
 	useEffect(() => {
 		setActiveTopic(storage[topic])
-		loadLikedQuestions() // Загрузка понравившихся вопросов при монтировании компонента
+		loadLikedQuestions()
 	}, [topic])
+
+
 
 	return (
 		<ParallaxScrollView
@@ -80,7 +85,7 @@ export default function DescriptionScreen() {
 				<Image source={topicImageMap[topic]} style={styles.topicImage} />
 			}
 		>
-			<ThemedView style={styles.titleContainer}>
+			<ThemedView style={styles.titleContainer }>
 				<ThemedText type='title'>{topic}</ThemedText>
 			</ThemedView>
 
@@ -104,9 +109,9 @@ export default function DescriptionScreen() {
 							)}
 						<Ionicons
 							size={30}
-							name={likedQuestions.some(likeEl => likeEl.id === el.id) ? 'heart' : 'heart-outline'} 
+							name={likedQuestions.some(likeEl => likeEl.id === el.id) ? 'heart' : 'heart-outline'}
 							style={styles.headerImage}
-							onPress={() => toggleLike(el)} 
+							onPress={() => toggleLike(el)}
 						/>
 					</Collapsible>
 				))}
