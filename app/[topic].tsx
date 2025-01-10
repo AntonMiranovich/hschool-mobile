@@ -19,7 +19,6 @@ import reactImage from '@/assets/images/react.png'
 import sqlImage from '@/assets/images/sql.png'
 import typescriptImage from '@/assets/images/typescript.png'
 import { Ionicons } from '@expo/vector-icons'
-import { useRoute } from '@react-navigation/native'
 
 interface iDescription {
 	readonly id: number
@@ -49,15 +48,22 @@ export default function DescriptionScreen() {
 	const { topic } = useLocalSearchParams()
 	const [activeTopic, setActiveTopic] = useState<iTopic>()
 	const [likedQuestions, setLikedQuestions] = useState<iDescription[]>([])
+	const [theme, setTheme] = useState()
 
-	
+
+	const getThemeStyle = async () => {
+		const themeStyle = await AsyncStorage.getItem('theme')
+		if (themeStyle) {
+			setTheme(JSON.parse(themeStyle))
+		}
+	}
+
 
 	const loadLikedQuestions = async () => {
 		const storedLikes = await AsyncStorage.getItem('likedQuestions')
 		if (storedLikes) {
 			setLikedQuestions(JSON.parse(storedLikes))
 		}
-
 	}
 
 	const toggleLike = async (el: iDescription) => {
@@ -74,22 +80,25 @@ export default function DescriptionScreen() {
 	useEffect(() => {
 		setActiveTopic(storage[topic])
 		loadLikedQuestions()
+		getThemeStyle()
 	}, [topic])
 
 
 
 	return (
 		<ParallaxScrollView
+			stateTheme={theme}
 			headerBackgroundColor={{ light: '#bde1eb', dark: '#473c1d' }}
 			headerImage={
 				<Image source={topicImageMap[topic]} style={styles.topicImage} />
 			}
 		>
-			<ThemedView style={styles.titleContainer }>
+			<ThemedView style={[styles.titleContainer, theme?.dark ? { backgroundColor: 'white' } : { backgroundColor: 'black' }]}>
 				<ThemedText type='title'>{topic}</ThemedText>
 			</ThemedView>
 
-			{activeTopic?.description &&
+			{
+				activeTopic?.description &&
 				activeTopic?.description.map((el, index: number) => (
 					<Collapsible key={index} title={el.question}>
 						<ThemedText>{el.answer}</ThemedText>
@@ -114,8 +123,9 @@ export default function DescriptionScreen() {
 							onPress={() => toggleLike(el)}
 						/>
 					</Collapsible>
-				))}
-		</ParallaxScrollView>
+				))
+			}
+		</ParallaxScrollView >
 	)
 }
 
@@ -124,6 +134,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		gap: 8,
+		backgroundColor: 'white'
 	},
 	topicImage: {
 		height: 250,
