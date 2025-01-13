@@ -1,6 +1,6 @@
 import { TouchableOpacity, StyleSheet, Image, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useRootNavigationState, useRouter } from 'expo-router';
+import {  useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -10,7 +10,6 @@ export default function HomeScreen() {
   const topics = ['HTML', 'CSS', 'JavaScript'];
   const router = useRouter()
   const [theme, setTheme] = useState()
-  const navigationState = useRootNavigationState();
 
 
   const getThemeStyle = async () => {
@@ -23,8 +22,6 @@ export default function HomeScreen() {
   const handleTopicPress = (topic: string) => {
     router.navigate(topic);
   };
-
-  console.log(theme);
 
 
   useEffect(() => {

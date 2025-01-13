@@ -20,6 +20,7 @@ export default function RootLayout() {
   });
 
   const [theme, setTheme] = useState(colorScheme === 'dark' ? DarkTheme : DefaultTheme);
+  const [path,setPath]=useState()
 
   
 
@@ -32,6 +33,7 @@ export default function RootLayout() {
   const changingTheTheme = async () => {
     await AsyncStorage.setItem('theme', JSON.stringify(theme))
   }
+  
 
   const toggleTheme = () => {
     setTheme(prevTheme => (prevTheme === DarkTheme ? DefaultTheme : DarkTheme));
@@ -48,7 +50,7 @@ export default function RootLayout() {
     <ThemeProvider value={theme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerTitle: 'Назад', headerShown: false }}  />
-        <Stack.Screen name="[topic]" options={{ headerTitle: 'QA' }} />
+        <Stack.Screen name="[topic]"  options={{ headerTitle: 'QA' }} />
         <Stack.Screen name="+not-found" />
       </Stack>
       <View style={{ position: 'absolute', top: 20, right: 20 }}> <Button title="Toggle Theme" onPress={toggleTheme} /> </View>

@@ -3,8 +3,8 @@ import { StyleSheet, View, FlatList } from 'react-native';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import AsyncStorage from '@react-native-async-storage/async-storage'; 
-import React, { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect, useState } from 'react';
 import { Collapsible } from '@/components/Collapsible';
 import { ExternalLink } from '@/components/ExternalLink';
 import { CodeComponent } from '@/components/CodeComponent';
@@ -20,6 +20,15 @@ interface iDescription {
 
 export default function Favorites() {
 	const [favorites, setFavorites] = useState<iDescription[]>([]);
+	const [theme, setTheme] = useState()
+
+
+	const getThemeStyle = async () => {
+		const themeStyle = await AsyncStorage.getItem('theme')
+		if (themeStyle) {
+			setTheme(JSON.parse(themeStyle))
+		}
+	}
 
 
 	const loadFavorites = async () => {
@@ -52,26 +61,31 @@ export default function Favorites() {
 		}, [])
 	);
 
+	useEffect(() => {
+		getThemeStyle()
+	}, [])
+
 
 	return (
 		<ParallaxScrollView
+			stateTheme={theme}
 			headerBackgroundColor={{ light: '#e4edef', dark: '#353636' }}
 			headerImage={
 				<Ionicons size={310} name='heart' style={styles.headerImage} />
 			}
 		>
-			<ThemedView>
-				<ThemedText type='title'>Favorites</ThemedText>
+			<ThemedView style={ theme?.dark ? { backgroundColor: 'white' } : { backgroundColor: 'black' }}>
+				<ThemedText style={theme?.dark ? { color: 'black', backgroundColor: 'white' } : { color: 'white', backgroundColor: 'black' }} type='title'>Favorites</ThemedText>
 
 				{favorites.map((el, index) => (
-					<Collapsible key={index} title={el.question}>
-						<ThemedText>{el.answer}</ThemedText>
+					<Collapsible themeValue={theme} key={index} title={el.question}>
+						<ThemedText  style={theme?.dark ? { color: 'black', backgroundColor: 'white' } : { color: 'white', backgroundColor: 'black' }}>{el.answer}</ThemedText>
 
 						{el.code && <CodeComponent code={el.code} />}
 
 						{el.link && el.link.map((link, linkIndex) => (
 							<ExternalLink key={linkIndex} href={link}>
-								<ThemedText type='link'> Узнать больше #{linkIndex + 1} </ThemedText>
+								<ThemedText  style={theme?.dark ? { color: 'black', backgroundColor: 'white' } : { color: 'white', backgroundColor: 'black' }} type='link'> Узнать больше #{linkIndex + 1} </ThemedText>
 							</ExternalLink>
 						))
 						}

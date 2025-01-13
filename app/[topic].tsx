@@ -76,6 +76,7 @@ export default function DescriptionScreen() {
 		console.log(updatedLikes);
 
 	}
+	
 
 	useEffect(() => {
 		setActiveTopic(storage[topic])
@@ -94,14 +95,14 @@ export default function DescriptionScreen() {
 			}
 		>
 			<ThemedView style={[styles.titleContainer, theme?.dark ? { backgroundColor: 'white' } : { backgroundColor: 'black' }]}>
-				<ThemedText type='title'>{topic}</ThemedText>
+				<ThemedText type='title' style={theme?.dark ? { color: 'black', backgroundColor: 'white' } : { color: 'white', backgroundColor: 'black' }}>{topic}</ThemedText>
 			</ThemedView>
 
 			{
 				activeTopic?.description &&
 				activeTopic?.description.map((el, index: number) => (
-					<Collapsible key={index} title={el.question}>
-						<ThemedText>{el.answer}</ThemedText>
+					<Collapsible themeValue={theme} key={index} title={el.question}>
+						<ThemedText style={theme?.dark ? { color: 'black', backgroundColor: 'white' } : { color: 'white', backgroundColor: 'black' }}>{el.answer}</ThemedText>
 
 						{el.code && <CodeComponent code={el.code} />}
 
