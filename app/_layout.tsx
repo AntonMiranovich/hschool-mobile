@@ -1,7 +1,7 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native'
 import { useFonts } from 'expo-font'
 import { Stack } from 'expo-router'
-import { CommonActions, useNavigation, useNavigationState, useRoute } from '@react-navigation/core'
+import { CommonActions, useNavigation} from '@react-navigation/core'
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect, useState } from 'react';
 import 'react-native-reanimated'
@@ -20,7 +20,6 @@ export default function RootLayout() {
   });
 
   const [theme, setTheme] = useState(colorScheme === 'dark' ? DarkTheme : DefaultTheme);
-  const [path,setPath]=useState()
 
   
 

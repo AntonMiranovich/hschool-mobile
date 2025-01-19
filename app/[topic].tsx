@@ -19,6 +19,7 @@ import reactImage from '@/assets/images/react.png'
 import sqlImage from '@/assets/images/sql.png'
 import typescriptImage from '@/assets/images/typescript.png'
 import { Ionicons } from '@expo/vector-icons'
+import { TextInput } from 'react-native-gesture-handler'
 
 interface iDescription {
 	readonly id: number
@@ -49,6 +50,7 @@ export default function DescriptionScreen() {
 	const [activeTopic, setActiveTopic] = useState<iTopic>()
 	const [likedQuestions, setLikedQuestions] = useState<iDescription[]>([])
 	const [theme, setTheme] = useState()
+	const [searchQuery, setSearchQuery] = useState('')
 
 
 	const getThemeStyle = async () => {
@@ -58,6 +60,12 @@ export default function DescriptionScreen() {
 		}
 	}
 
+	const filteredDescriptions =
+		activeTopic?.description.filter(el =>
+			el.question.toLowerCase().includes(searchQuery.toLowerCase())
+		) || []
+
+		
 
 	const loadLikedQuestions = async () => {
 		const storedLikes = await AsyncStorage.getItem('likedQuestions')
@@ -76,7 +84,7 @@ export default function DescriptionScreen() {
 		console.log(updatedLikes);
 
 	}
-	
+
 
 	useEffect(() => {
 		setActiveTopic(storage[topic])
@@ -98,33 +106,38 @@ export default function DescriptionScreen() {
 				<ThemedText type='title' style={theme?.dark ? { color: 'black', backgroundColor: 'white' } : { color: 'white', backgroundColor: 'black' }}>{topic}</ThemedText>
 			</ThemedView>
 
-			{
-				activeTopic?.description &&
-				activeTopic?.description.map((el, index: number) => (
-					<Collapsible themeValue={theme} key={index} title={el.question}>
-						<ThemedText style={theme?.dark ? { color: 'black', backgroundColor: 'white' } : { color: 'white', backgroundColor: 'black' }}>{el.answer}</ThemedText>
+			<TextInput
+				style={styles.searchInput}
+				placeholder='Поиск по вопросам...'
+				value={searchQuery}
+				onChangeText={setSearchQuery}
+			/>
 
-						{el.code && <CodeComponent code={el.code} />}
+			{filteredDescriptions.map((el, index: number) => (
+				<Collapsible themeValue={theme} key={index} title={el.question}>
+					<ThemedText style={theme?.dark ? { color: 'black', backgroundColor: 'white' } : { color: 'white', backgroundColor: 'black' }}>{el.answer}</ThemedText>
 
-						{el.link &&
-							el.link.map(
-								(el, index) =>
-									el && (
-										<ExternalLink key={index} href={el}>
-											<ThemedText type='link'>
-												Узнать больше #{index + 1}
-											</ThemedText>
-										</ExternalLink>
-									)
-							)}
-						<Ionicons
-							size={30}
-							name={likedQuestions.some(likeEl => likeEl.id === el.id) ? 'heart' : 'heart-outline'}
-							style={styles.headerImage}
-							onPress={() => toggleLike(el)}
-						/>
-					</Collapsible>
-				))
+					{el.code && <CodeComponent code={el.code} />}
+
+					{el.link &&
+						el.link.map(
+							(el, index) =>
+								el && (
+									<ExternalLink key={index} href={el}>
+										<ThemedText type='link'>
+											Узнать больше #{index + 1}
+										</ThemedText>
+									</ExternalLink>
+								)
+						)}
+					<Ionicons
+						size={30}
+						name={likedQuestions.some(likeEl => likeEl.id === el.id) ? 'heart' : 'heart-outline'}
+						style={styles.headerImage}
+						onPress={() => toggleLike(el)}
+					/>
+				</Collapsible>
+			))
 			}
 		</ParallaxScrollView >
 	)
@@ -145,5 +158,13 @@ const styles = StyleSheet.create({
 	},
 	headerImage: {
 		color: '#A1CEDC',
+	},
+	searchInput: {
+		height: 40,
+		borderColor: '#A1CEDC',
+		borderWidth: 1,
+		margin: 10,
+		paddingHorizontal: 10,
+		borderRadius: 10,
 	},
 })
